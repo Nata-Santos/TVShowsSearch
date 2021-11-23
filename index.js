@@ -1,22 +1,45 @@
 const handleSearch = async (event) => {
   event.preventDefault();
 
-  // implemente a consulta a partir daqui
 
-  //// Exemplo de endpoint: https://api.tvmaze.com/search/shows?q=lost
+  const listaDeProgramas = document.querySelector('#shows');
+  listaDeProgramas.innerHTML = '';
 
-  //// Elementos de leiaute importantes:
 
-  //  #message: use para exibir mensagens aos usuário, por exemplo:
+  const busca = document.querySelector('#query');
+  const textoAserBuscado = busca.value;
 
-  const message = document.querySelector('#message');
-  message.innerHTML = 'exercício ainda não resolvido.';
 
-  //  #shows: conterá os shows, cada um em um <li>, por exemplo:
-  // <li>
-  //   <img class="poster" src="https://static.tvmaze.com/uploads/images/medium_portrait/0/1389.jpg" />
-  //   <span class="show-name">Lost</span>
-  // </li>
+  const url = `https://api.tvmaze.com/search/shows?q=${textoAserBuscado}`;
+
+
+  const resposta = await fetch(url);
+  const programas = await resposta.json();
+
+
+  if (programas.length === 0) {
+    message.innerHTML = 'nenhum resultado encontrado';
+    return;
+  }
+
+  message.innerHTML = '';
+
+  programas.forEach((programa) => {
+    const titulo = programa?.show?.name || '';
+    const imagem = programa?.show?.image?.medium || '';
+
+
+
+    listaDeProgramas.insertAdjacentHTML(
+      'beforeend',
+      `
+    <li>
+    <img class="poster" src="${imagem}">
+    <span class="show-name">${titulo}</span>
+    </li>
+    `
+    );
+  });
 };
 
 document.addEventListener('DOMContentLoaded', () => {
